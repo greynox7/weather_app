@@ -1,14 +1,7 @@
-from fastapi import FastAPI, Request
-from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
+from flask import Flask, render_template
 import requests
-import uvicorn
-from pathlib import Path
 
-app = FastAPI()
-
-BASE_DIR = Path(__file__).resolve().parent
-templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
+app = Flask(__name__)
 
 def get_weather_data():
     # Seoul coordinates: latitude 37.5665, longitude 126.9780
@@ -47,25 +40,22 @@ def get_weather_data():
         print(f"Error fetching weather: {e}")
         return None
 
-@app.get("/", response_class=HTMLResponse)
-async def read_root(request: Request):
+@app.route("/")
+def read_root():
     weather_data = get_weather_data()
-    context = {"request": request}
     
     if weather_data:
-        context.update({
-            "temperature": weather_data["temperature"],
-            "windspeed": weather_data["windspeed"],
-            "status_text": weather_data["status_text"]
-        })
+        return render_template("index.html", 
+            temperature=weather_data["temperature"],
+            windspeed=weather_data["windspeed"],
+            status_text=weather_data["status_text"]
+        )
     else:
-        context.update({
-            "temperature": "-",
-            "windspeed": "-",
-            "status_text": "데이터를 가져올 수 없습니다"
-        })
-        
-    return templates.TemplateResponse("index.html", context)
+        return render_template("index.html", 
+            temperature="-",
+            windspeed="-",
+            status_text="데이터를 가져올 수 없습니다"
+        )
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    app.run(host="0.0.0.0", port=8000, debug=True)
