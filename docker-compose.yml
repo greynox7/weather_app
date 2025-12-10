@@ -1,0 +1,7 @@
+services:
+  weather-service:
+    build: .
+    container_name: weather-service
+    ports:
+      - "8000:8000"
+    restart: always
