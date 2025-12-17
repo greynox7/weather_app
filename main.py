@@ -6,7 +6,7 @@ app = Flask(__name__)
 def get_coordinates(city_name):
     url = f"https://geocoding-api.open-meteo.com/v1/search?name={city_name}&count=1&language=ko&format=json"
     try:
-        response = requests.get(url)
+        response = requests.get(url, timeout=5)
         response.raise_for_status()
         data = response.json()
         if "results" in data and data["results"]:
@@ -20,7 +20,7 @@ def get_weather_data(lat, lon):
     url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current_weather=true&timezone=auto"
     
     try:
-        response = requests.get(url)
+        response = requests.get(url, timeout=5)
         response.raise_for_status()
         data = response.json()
         
