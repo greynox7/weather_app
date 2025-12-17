@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: weather-service
+spec:
+  type: LoadBalancer  # 외부에서 접속 가능하게 설정
+  selector:
+    app: weather-app
+  ports:
+    - protocol: TCP
+      port: 80      # 외부에서는 80번 포트로 접속
+      targetPort: 8000  # 내부 컨테이너의 8000번 포트로 연결

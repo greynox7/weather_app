@@ -87,6 +87,28 @@
             border-radius: 20px;
             cursor: pointer;
         }
+        .city-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+        .city-btn {
+            padding: 6px 12px;
+            background-color: #f1f2f6;
+            border: 1px solid #dfe4ea;
+            border-radius: 15px;
+            color: #57606f;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        .city-btn:hover {
+            background-color: #dfe4ea;
+            color: #2f3542;
+        }
     </style>
 </head>
 <body>
@@ -95,6 +117,17 @@
             <input type="text" name="city" placeholder="도시 이름 (예: Seoul)" required>
             <button type="submit">검색</button>
         </form>
+
+        <div class="city-buttons">
+            <a href="/?city=Seoul" class="city-btn">서울</a>
+            <a href="/?city=New York" class="city-btn">뉴욕</a>
+            <a href="/?city=London" class="city-btn">런던</a>
+            <a href="/?city=Tokyo" class="city-btn">도쿄</a>
+            <a href="/?city=Paris" class="city-btn">파리</a>
+            <a href="/?city=Rome" class="city-btn">로마</a>
+            <a href="/?city=Moscow" class="city-btn">모스크바</a>
+            <a href="/?city=Beijing" class="city-btn">베이징</a>
+        </div>
 
         <h1>{{ city_name }} 날씨</h1>
         <div class="temp">{{ temperature }}°C</div>
