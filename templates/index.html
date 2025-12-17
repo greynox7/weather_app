@@ -67,11 +67,36 @@
         .refresh-btn:active {
             transform: translateY(0);
         }
+        .search-box {
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 10px;
+        }
+        .search-box input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+        }
+        .search-box button {
+            padding: 10px 20px;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <div class="weather-card">
-        <h1>서울 날씨 🇰🇷</h1>
+        <form action="/" method="get" class="search-box">
+            <input type="text" name="city" placeholder="도시 이름 (예: Seoul)" required>
+            <button type="submit">검색</button>
+        </form>
+
+        <h1>{{ city_name }} 날씨</h1>
         <div class="temp">{{ temperature }}°C</div>
         <div class="status">{{ status_text }}</div>
         
