@@ -16,6 +16,11 @@ spec:
       - name: weather-app
         image: greynox/weather-app:latest  # Docker Hub 이미지 사용
         imagePullPolicy: Always  # 항상 최신 이미지를 다시 다운로드
+        env:
+        - name: REDIS_HOST
+          value: "redis-service"
+        - name: REDIS_PORT
+          value: "6379"
         ports:
         - containerPort: 8000
         resources:

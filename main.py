@@ -1,22 +1,65 @@
 from flask import Flask, render_template, request
 import requests
+import redis
+import json
+import os
 
 app = Flask(__name__)
 
+# Redis configuration
+REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
+REDIS_PORT = int(os.getenv("REDIS_PORT", 6379))
+
+try:
+    cache = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0, decode_responses=True)
+    cache.ping() # Test connection
+    print(f"Connected to Redis at {REDIS_HOST}:{REDIS_PORT}")
+except redis.ConnectionError:
+    print("Warning: Could not connect to Redis. Caching disabled.")
+    cache = None
+
 def get_coordinates(city_name):
+    # Check cache first
+    if cache:
+        try:
+            cached_data = cache.get(f"geo:{city_name}")
+            if cached_data:
+                print(f"Cache hit for coordinates: {city_name}")
+                return json.loads(cached_data)
+        except redis.RedisError as e:
+            print(f"Redis error: {e}")
+
     url = f"https://geocoding-api.open-meteo.com/v1/search?name={city_name}&count=1&language=ko&format=json"
     try:
         response = requests.get(url, timeout=5)
         response.raise_for_status()
         data = response.json()
         if "results" in data and data["results"]:
-            return data["results"][0]
+            result = data["results"][0]
+            # Save to cache
+            if cache:
+                try:
+                    cache.setex(f"geo:{city_name}", 86400, json.dumps(result)) # Cache for 24 hours
+                except redis.RedisError as e:
+                    print(f"Redis error saving cache: {e}")
+            return result
         return None
     except Exception as e:
         print(f"Error fetching coordinates: {e}")
         return None
 
 def get_weather_data(lat, lon):
+    # Check cache first
+    cache_key = f"weather:{lat}:{lon}"
+    if cache:
+        try:
+            cached_data = cache.get(cache_key)
+            if cached_data:
+                print(f"Cache hit for weather: {lat}, {lon}")
+                return json.loads(cached_data)
+        except redis.RedisError as e:
+            print(f"Redis error: {e}")
+
     url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current_weather=true&timezone=auto"
     
     try:
@@ -42,11 +85,20 @@ def get_weather_data(lat, lon):
         elif weathercode in [71, 73, 75]:
             status_text = "눈❄️"
             
-        return {
+        result = {
             "temperature": temperature,
             "windspeed": windspeed,
             "status_text": status_text
         }
+
+        # Save to cache
+        if cache:
+            try:
+                cache.setex(cache_key, 600, json.dumps(result)) # Cache for 10 minutes
+            except redis.RedisError as e:
+                print(f"Redis error saving cache: {e}")
+        
+        return result
 
     except Exception as e:
         print(f"Error fetching weather: {e}")

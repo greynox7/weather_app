@@ -26,7 +26,3 @@ jobs:
       
     - name: Push the Docker image
       run: docker push ${{ secrets.DOCKER_USERNAME }}/weather-app:latest
-      
-    - name: Trigger Render Deploy
-      if: github.ref == 'refs/heads/main'
-      run: curl ${{ secrets.RENDER_DEPLOY_HOOK }}
