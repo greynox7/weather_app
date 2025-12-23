@@ -3,3 +3,5 @@ requests
 python-dotenv
 gunicorn
 redis
+prometheus-flask-exporter
+
