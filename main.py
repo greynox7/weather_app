@@ -78,15 +78,15 @@ def get_weather_data(lat, lon):
         status_text = "기타"
         # Simple weather code interpretation
         if weathercode == 0:
-            status_text = "맑음☀️"
+            status_text = "맑음 ☀️"
         elif weathercode in [1, 2, 3]:
-            status_text = "흐림☁️"
+            status_text = "흐림 ☁️"
         elif weathercode in [45, 48]:
-            status_text = "안개🌫️"
+            status_text = "안개 🌫️"
         elif weathercode in [51, 53, 55, 61, 63, 65]:
-            status_text = "비🌧️"
+            status_text = "비 🌧️"
         elif weathercode in [71, 73, 75]:
-            status_text = "눈❄️"
+            status_text = "눈 ❄️"
             
         result = {
             "temperature": temperature,
